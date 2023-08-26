@@ -1,5 +1,6 @@
 import Header from './componentes/header'
 import styled from 'styled-components'
+import Body from './componentes/body/body';
 
 const AppConteiner = styled.div`
   width: 100vw;
@@ -10,6 +11,7 @@ function App() {
   return (
     <AppConteiner>
         <Header/>
+        <Body/>
     </AppConteiner>
   );
 }
