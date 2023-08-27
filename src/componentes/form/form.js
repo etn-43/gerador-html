@@ -1,5 +1,6 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 import React, { useState } from 'react';
+import { OpenAI } from 'openai'
 
 const FormContainer = styled.form`
     border-radius: 10px;
@@ -9,6 +10,10 @@ const FormContainer = styled.form`
     text-align: center;
     
 `
+const DivContainer = styled.div`
+  text-align: center;
+`
+
 const Input = styled.input`
     width: 100%;
     padding: 10px;
@@ -34,22 +39,62 @@ const Button = styled.button`
 
 
 function Form() {
-const [inputApiValue, setApiInputValue] = useState('')
-const [inputPromptValue, setPromptInputValue] = useState('')
+const [inputApiValue, setApiInputValue] = useState('');
+const [inputPromptValue, setPromptInputValue] = useState('');
+const [result, setResult] = useState();
 
   const apiInputChange = (event) => {
-    setApiInputValue(event.target.value)
+    setApiInputValue(event.target.value);
   };
 
   const promptInputChange = (event) => {
-    setPromptInputValue(event.target.value)
+    setPromptInputValue(event.target.value);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    alert(`Você digitou: ${inputApiValue} e ${inputPromptValue}`)
-  };
+  const generatePrompt = (input) => {
+    return `Quero que você atue como um console Html. 
+        Eu vou digitar comandos e você deverá responder com 
+        o que o console deveria mostrar. Quero que você apenas 
+        responda com a saída do console dentro de um único bloco de código e nada mais. 
+        Não escreva explicações ou diga que entendeu, somente o codigo.
+    
+        input: gere um a
+        output: <a href="https://www.example.com">Clique aqui</a>
+        input: ${input}
+        output:`;
+}
+
+  const TextToHtml = ({ text }) => {
+    return <div dangerouslySetInnerHTML={{ __html: text }} />;
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const openai = new OpenAI({apiKey: inputApiValue, dangerouslyAllowBrowser: true} );
+      const completion = openai.completions.create({
+        model: "text-davinci-003",
+        prompt: generatePrompt(inputPromptValue),
+        max_tokens: 300,
+    })
+    .then(res => {
+        console.log(res.choices[0].text);
+        setResult(res.choices[0].text);
+        setApiInputValue("");
+        setPromptInputValue("");
+      })
+      .catch(error => {
+        console.error("Erro:", error.message);
+      });
+      
+    } catch(error) {
+      console.error(error)
+      alert(error.message);
+    }
+
+  }
     return(
+      <DivContainer>
         <FormContainer onSubmit={handleSubmit}>
             <Input  
             type="text"
@@ -65,7 +110,11 @@ const [inputPromptValue, setPromptInputValue] = useState('')
             placeholder="Prompt" 
             />
             <Button type="submit">Enviar</Button>
+            <br/>
+          {result}
         </FormContainer>
+        <TextToHtml text={result}/>
+      </DivContainer> 
     )
 }
 
