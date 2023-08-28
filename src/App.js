@@ -1,18 +1,15 @@
-import Header from './componentes/header'
-import styled from 'styled-components'
-import Body from './componentes/body/body';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Tutorial from './Tutorial'
+import Home from './Home';
 
-const AppConteiner = styled.div`
-  width: 100vw;
-  height: 150vh;
-  background-image: linear-gradient(to bottom, #f0f0f0, #ccc);
-`
 function App() {
   return (
-    <AppConteiner>
-        <Header/>
-        <Body/>
-    </AppConteiner>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home/>} />
+        <Route path="/tutorial" element={<Tutorial/>} />
+      </Routes>
+    </Router>
   );
 }
 

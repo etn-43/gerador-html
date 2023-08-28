@@ -11,6 +11,9 @@ const FormContainer = styled.form`
     
 `
 const DivContainer = styled.div`
+  justify-content: center;
+  padding: 20px;
+  width: 300px;
   text-align: center;
 `
 
@@ -85,6 +88,7 @@ const [result, setResult] = useState();
       })
       .catch(error => {
         console.error("Erro:", error.message);
+        setResult("Erro " + error.message);
       });
       
     } catch(error) {
@@ -100,7 +104,7 @@ const [result, setResult] = useState();
             type="text"
             value={inputApiValue}
             onChange={apiInputChange} 
-            placeholder="API Key" 
+            placeholder="OpenAI API Key" 
             />
 
             <Input 
@@ -111,7 +115,7 @@ const [result, setResult] = useState();
             />
             <Button type="submit">Enviar</Button>
             <br/>
-          {result}
+            {result}
         </FormContainer>
         <TextToHtml text={result}/>
       </DivContainer> 
